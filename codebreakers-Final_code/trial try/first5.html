@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Personal Finance Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("pexels-karolina-grabowska-4386365.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      color: black;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      padding: 0.8rem 1.2rem;
+      margin: 0.5rem;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #2575fc, #6a11cb);
+    }
+
+    form {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .form-container {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Personal Finance Tracker</h1>
+    <p>Please select an option:</p>
+    <button id="newUserButton">New User</button>
+    <button id="oldUserButton">Old User</button>
+
+    <!-- New User Registration Form -->
+    <form id="registerForm" class="form-container">
+      <h2>Register</h2>
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+      <label for="registerEmail">Email</label>
+      <input type="email" id="registerEmail" placeholder="Enter your email" required>
+      <label for="registerPassword">Password</label>
+      <input type="password" id="registerPassword" placeholder="Enter your password" required>
+      <button type="button" id="registerSubmit">Register</button>
+    </form>
+
+    <!-- Old User Login Form -->
+    <form id="loginForm" class="form-container">
+      <h2>Login</h2>
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="Enter your email" required>
+      <label for="loginPassword">Password</label>
+      <input type="password" id="loginPassword" placeholder="Enter your password" required>
+      <button type="button" id="loginSubmit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    const newUserButton = document.getElementById("newUserButton");
+    const oldUserButton = document.getElementById("oldUserButton");
+    const registerForm = document.getElementById("registerForm");
+    const loginForm = document.getElementById("loginForm");
+
+    newUserButton.addEventListener("click", () => {
+      registerForm.style.display = "block";
+      loginForm.style.display = "none";
+    });
+
+    oldUserButton.addEventListener("click", () => {
+      loginForm.style.display = "block";
+      registerForm.style.display = "none";
+    });
+
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    document.getElementById("registerSubmit").addEventListener("click", () => {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value.trim();
+
+      if (!isValidEmail(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      if (name && email && password) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const userExists = users.some(user => user.email === email);
+
+        if (userExists) {
+          alert("This email is already registered. Please log in instead.");
+        } else {
+          users.push({ name, email, password });
+          localStorage.setItem("users", JSON.stringify(users));
+          alert(`User Registered:\nName: ${name}\nEmail: ${email}`);
+          registerForm.reset();
+          window.location.href = "./index.html";
+        }
+      } else {
+        alert("Please fill in all fields.");
+      }
+    });
+
+    document.getElementById("loginSubmit").addEventListener("click", () => {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(user => user.email === email && user.password === password);
+
+      if (user) {
+        alert(`Welcome back, ${user.name}!`);
+        loginForm.reset();
+        window.location.href = "./index.html";
+      } else {
+        alert("Invalid email or password. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
